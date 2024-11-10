@@ -1,22 +1,27 @@
 import {
   IsString,
   IsNotEmpty,
-  IsNumber,
+  IsBoolean,
   IsOptional,
   IsUUID,
+  IsInt,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 
-export class UpdateAlbumDto {
+export class UpdateTrackDto {
   @IsString()
   @IsNotEmpty()
   @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
   name: string;
 
-  @IsNumber()
-  year: number;
+  @IsOptional()
+  @IsUUID()
+  artistId: string;
 
   @IsOptional()
   @IsUUID()
-  artistId: string | null;
+  albumId: string;
+
+  @IsInt()
+  duration: number;
 }

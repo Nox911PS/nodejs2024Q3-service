@@ -4,10 +4,16 @@ import { Artist } from './interfaces/artist.interface';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { ResponseArtistDto } from './dto/response-artist.dto';
+import { TrackService } from '../track/track.service';
+import { AlbumService } from '../album/album.service';
 
 @Injectable()
 export class ArtistService {
-  constructor(private db: InMemoryDatabaseService<Artist>) {}
+  constructor(
+    private db: InMemoryDatabaseService<Artist>,
+    private trackService: TrackService,
+    private albumService: AlbumService,
+  ) {}
 
   create(createArtistDto: CreateArtistDto): ResponseArtistDto {
     const artist: Artist = {
@@ -51,6 +57,22 @@ export class ArtistService {
     if (!isArtistDeleted) {
       throw new NotFoundException(`Artist with ID ${id} not found`);
     }
+
+    const tracks = this.trackService
+      .findAll()
+      .filter((track) => track.artistId === id);
+
+    const albums = this.albumService
+      .findAll()
+      .filter((album) => album.artistId === id);
+
+    tracks.forEach((track) => {
+      this.trackService.update(track.id, { ...track, artistId: null });
+    });
+
+    albums.forEach((album) => {
+      this.albumService.update(album.id, { ...album, artistId: null });
+    });
 
     return isArtistDeleted;
   }
