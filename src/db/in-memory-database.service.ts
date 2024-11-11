@@ -49,4 +49,12 @@ export class InMemoryDatabaseService<T> {
   getAllFavorite(): Favorite {
     return this.favorites;
   }
+
+  removeFavorite(favoriteId: string, favoriteType: FavoriteType): boolean {
+    this.favorites[favoriteType] = this.favorites[favoriteType].filter(
+      (item) => item !== favoriteId,
+    );
+
+    return true;
+  }
 }

@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  NotFoundException,
   Param,
   Post,
   Put,
@@ -37,7 +38,13 @@ export class TrackController {
     @Param('id', UUIDValidationPipe)
     id: string,
   ): ResponseTrackDto | undefined {
-    return this.trackService.findOne(id);
+    const track = this.trackService.findOne(id);
+
+    if (!track) {
+      throw new NotFoundException(`Track with ID ${id} not found`);
+    }
+
+    return track;
   }
 
   @Post()

@@ -1,5 +1,6 @@
 import {
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -50,9 +51,21 @@ export class FavoriteController {
     return this.favoriteService.create(id, 'artists');
   }
 
-  // @Delete(':id')
-  // @HttpCode(HttpStatus.NO_CONTENT)
-  // remove(@Param('id', UUIDValidationPipe) id: string): boolean {
-  //   return this.artistService.remove(id);
-  // }
+  @Delete('track/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  removeTrack(@Param('id', UUIDValidationPipe) id: string): void {
+    return this.favoriteService.remove(id, 'tracks');
+  }
+
+  @Delete('album/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  removeAlbum(@Param('id', UUIDValidationPipe) id: string): void {
+    return this.favoriteService.remove(id, 'albums');
+  }
+
+  @Delete('artist/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  removeArtist(@Param('id', UUIDValidationPipe) id: string): void {
+    return this.favoriteService.remove(id, 'artists');
+  }
 }

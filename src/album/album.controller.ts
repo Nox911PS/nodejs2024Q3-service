@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  NotFoundException,
   Param,
   ParseUUIDPipe,
   PipeTransform,
@@ -40,7 +41,12 @@ export class AlbumController {
     @Param('id', UUIDValidationPipe)
     id: string,
   ): ResponseAlbumDto | undefined {
-    return this.albumService.findOne(id);
+    const album = this.albumService.findOne(id);
+    if (!album) {
+      throw new NotFoundException(`Album with ID ${id} not found`);
+    }
+
+    return album;
   }
 
   @Post()

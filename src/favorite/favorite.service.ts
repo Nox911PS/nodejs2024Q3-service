@@ -1,10 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { InMemoryDatabaseService } from '../db/in-memory-database.service';
 import { Favorite, FavoriteType } from './interfaces/favorite.interface';
 import { ResponseFavoriteDto } from './dto/response-favorite.dto';
 import { TrackService } from '../track/track.service';
 import { AlbumService } from '../album/album.service';
 import { ArtistService } from '../artist/artist.service';
+import { Artist } from '../artist/interfaces/artist.interface';
+import { Track } from '../track/interfaces/track.interface';
+import { Album } from '../album/interfaces/album.interface';
 
 @Injectable()
 export class FavoriteService {
@@ -16,6 +23,26 @@ export class FavoriteService {
   ) {}
 
   create(id: string, type: FavoriteType): ResponseFavoriteDto {
+    let entity: Artist | Track | Album;
+
+    if (type === 'tracks') {
+      entity = this.trackService.findOne(id);
+    }
+
+    if (type === 'albums') {
+      entity = this.albumService.findOne(id);
+    }
+
+    if (type === 'artists') {
+      entity = this.artistService.findOne(id);
+    }
+
+    if (!entity) {
+      throw new UnprocessableEntityException(
+        `${type.toUpperCase()} with ID ${id} not found`,
+      );
+    }
+
     return this.db.createFavorite(id, type) as unknown as ResponseFavoriteDto;
   }
 
@@ -39,44 +66,13 @@ export class FavoriteService {
     };
   }
 
-  // update(id: string, updateArtistdDto: UpdateFavoriteDto): ResponseFavoriteDto {
-  //   const artist = this.db.findOne(id);
-  //
-  //   if (!artist) {
-  //     throw new NotFoundException(`Artist with ID ${id} not found`);
-  //   }
-  //
-  //   const updatedArtist: Artist = this.db.update(id, {
-  //     ...artist,
-  //     name: updateArtistdDto.name,
-  //     grammy: updateArtistdDto.grammy,
-  //   });
-  //
-  //   return updatedArtist;
-  // }
-  //
-  // remove(id: string): boolean {
-  //   const isArtistDeleted = this.db.remove(id);
-  //   if (!isArtistDeleted) {
-  //     throw new NotFoundException(`Artist with ID ${id} not found`);
-  //   }
-  //
-  //   const tracks = this.trackService
-  //     .findAll()
-  //     .filter((track) => track.artistId === id);
-  //
-  //   const albums = this.albumService
-  //     .findAll()
-  //     .filter((album) => album.artistId === id);
-  //
-  //   tracks.forEach((track) => {
-  //     this.trackService.update(track.id, { ...track, artistId: null });
-  //   });
-  //
-  //   albums.forEach((album) => {
-  //     this.albumService.update(album.id, { ...album, artistId: null });
-  //   });
-  //
-  //   return isArtistDeleted;
-  // }
+  remove(id: string, type: FavoriteType): void {
+    const isFavoriteIdExist = this.db.getAllFavorite()[type].includes(id);
+
+    if (!isFavoriteIdExist) {
+      throw new NotFoundException(`Favorite ${type} with ID ${id} not found`);
+    }
+
+    this.db.removeFavorite(id, type);
+  }
 }

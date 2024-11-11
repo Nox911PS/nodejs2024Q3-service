@@ -27,13 +27,7 @@ export class AlbumService {
   }
 
   findOne(id: string): ResponseAlbumDto {
-    const album = this.db.findOne(id);
-
-    if (!album) {
-      throw new NotFoundException(`Album with ID ${id} not found`);
-    }
-
-    return album;
+    return this.db.findOne(id);
   }
 
   update(id: string, updateAlbumDto: UpdateAlbumDto): ResponseAlbumDto {
