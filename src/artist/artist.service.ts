@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InMemoryDatabaseService } from '../db/in-memory-database.service';
 import { Artist } from './interfaces/artist.interface';
 import { UpdateArtistDto } from './dto/update-artist.dto';
@@ -6,6 +11,7 @@ import { CreateArtistDto } from './dto/create-artist.dto';
 import { ResponseArtistDto } from './dto/response-artist.dto';
 import { TrackService } from '../track/track.service';
 import { AlbumService } from '../album/album.service';
+import { v4 } from 'uuid';
 
 @Injectable()
 export class ArtistService {
@@ -18,6 +24,7 @@ export class ArtistService {
   create(createArtistDto: CreateArtistDto): ResponseArtistDto {
     const artist: Artist = {
       ...createArtistDto,
+      id: v4(),
     };
     return this.db.create(artist);
   }

@@ -4,6 +4,7 @@ import { Track } from './interfaces/track.interface';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { ResponseTrackDto } from './dto/response-track.dto';
+import { v4 } from 'uuid';
 
 @Injectable()
 export class TrackService {
@@ -12,6 +13,7 @@ export class TrackService {
   create(createTrackDto: CreateTrackDto): ResponseTrackDto {
     const track: Track = {
       ...createTrackDto,
+      id: v4(),
     };
     return this.db.create(track);
   }

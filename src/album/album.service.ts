@@ -5,6 +5,7 @@ import { UpdateAlbumDto } from './dto/update-album.dto';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { ResponseAlbumDto } from './dto/response-album.dto';
 import { TrackService } from '../track/track.service';
+import { v4 } from 'uuid';
 
 @Injectable()
 export class AlbumService {
@@ -16,6 +17,7 @@ export class AlbumService {
   create(createArtistDto: CreateAlbumDto): ResponseAlbumDto {
     const album: Album = {
       ...createArtistDto,
+      id: v4(),
     };
     return this.db.create(album);
   }

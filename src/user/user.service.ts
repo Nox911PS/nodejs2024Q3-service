@@ -9,6 +9,7 @@ import { User } from './interfaces/user.interface';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ResponseUserDto } from './dto/response-user.dto';
+import { v4 } from 'uuid';
 
 @Injectable()
 export class UserService {
@@ -17,6 +18,7 @@ export class UserService {
   create(createUserDto: CreateUserDto): ResponseUserDto {
     const user: User = {
       ...createUserDto,
+      id: v4(),
       version: 1,
       createdAt: Date.now(),
       updatedAt: Date.now(),

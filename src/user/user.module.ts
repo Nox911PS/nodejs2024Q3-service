@@ -6,7 +6,7 @@ import { SharedModule } from '../shared/shared.module';
 
 @Module({
   imports: [SharedModule],
-  providers: [UserService, InMemoryDatabaseService],
+  providers: [UserService],
   controllers: [UserController],
 })
 export class UserModule {}
