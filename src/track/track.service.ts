@@ -23,13 +23,7 @@ export class TrackService {
   }
 
   findOne(id: string): ResponseTrackDto {
-    const track = this.db.findOne(id);
-
-    if (!track) {
-      throw new NotFoundException(`Track with ID ${id} not found`);
-    }
-
-    return track;
+    return this.db.findOne(id);
   }
 
   update(id: string, updateTrackDto: UpdateTrackDto): ResponseTrackDto {
