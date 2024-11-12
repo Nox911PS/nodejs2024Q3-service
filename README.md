@@ -1,5 +1,7 @@
 # Home Library Service
 
+Users can create, read, update, delete data about Artists, Tracks and Albums, add them to Favorites in their own.
+
 ## Prerequisites
 
 - Git - [Download & Install Git](https://git-scm.com/downloads).
@@ -43,18 +45,6 @@ To run only one of all test suites
 npm run test -- <path to suite>
 ```
 
-To run all test with authorization
-
-```
-npm run test:auth
-```
-
-To run only specific test suite with authorization
-
-```
-npm run test:auth -- <path to suite>
-```
-
 ### Auto-fix and format
 
 ```
@@ -65,8 +55,64 @@ npm run lint
 npm run format
 ```
 
-### Debugging in VSCode
+## Using
 
-Press <kbd>F5</kbd> to debug.
+You can make requests with the postman APP [https://www.postman.com/](https://www.postman.com/).
 
-For more information, visit: https://code.visualstudio.com/docs/editor/debugging
+Use separated routes for all requests:
+
+User
+
++ GET /user - get all users
++ GET /user/:id - get single user by id
++ POST /user - create user (following DTO should be used) CreateUserDto
+  interface CreateUserDto {
+  login: string;
+  password: string;
+  }
++ PUT /user/:id - update user's password UpdatePasswordDto (with attributes):
+  interface UpdatePasswordDto {
+  oldPassword: string; // previous password
+  newPassword: string; // new password
+  }
++ DELETE /user/:id - delete user
+
+Track
+
++ GET /track - get all tracks
++ GET /track/:id - get single track by id
++ POST /track - create new track
++ PUT /track/:id - update track info
++ DELETE /track/:id - delete track
+
+Artist
+
++ GET /artist - get all artists
++ GET /artist/:id - get single artist by id
++ POST /artist - create new artist
++ PUT /artist/:id - update artist info
++ DELETE /artist/:id - delete album
+
+Album
+
++ GET /album - get all albums
++ GET /album/:id - get single album by id
++ POST /album - create new album
++ PUT /album/:id - update album info
++ DELETE /album/:id - delete album
+
+Favorites
+
++ GET /favs - get all favorites
+  Server should answer with status code 200 and all favorite records (not their ids), split by entity type:
+  interface FavoritesResponse{
+  artists: Artist[];
+  albums: Album[];
+  tracks: Track[];
+  }
++ POST /favs/track/:id - add track to the favorites
++ DELETE /favs/track/:id - delete track from favorites
++ POST /favs/album/:id - add album to the favorites
++ DELETE /favs/album/:id - delete album from favorites
++ POST /favs/artist/:id - add artist to the favorites
++ DELETE /favs/artist/:id - delete artist from favorites
