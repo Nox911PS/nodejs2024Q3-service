@@ -14,7 +14,7 @@ import { typeOrmConfig } from './config/typeorm.config';
     ConfigModule.forRoot({
       load: [configuration],
     }),
-    // TypeOrmModule.forRoot(typeOrmConfig),
+    TypeOrmModule.forRoot(typeOrmConfig),
     UserModule,
     ArtistModule,
     AlbumModule,
