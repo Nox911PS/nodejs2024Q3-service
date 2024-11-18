@@ -11,7 +11,7 @@ import { ResponseUserDto } from './dto/response-user.dto';
 import { v4 } from 'uuid';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { PostgresErrorCode } from '../helpers/postgres.helper';
+import { PostgresErrorCode } from '../shared/helpers/postgres.helper';
 
 @Injectable()
 export class UserService {
@@ -78,7 +78,6 @@ export class UserService {
       ...user,
       password: updateUserPasswordDto.newPassword,
       version: user.version + 1,
-      updatedAt: Date.now(),
     });
 
     return this.userRepository.save(updatedUser);

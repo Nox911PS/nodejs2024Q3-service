@@ -6,13 +6,14 @@ import {
   BeforeInsert,
   BeforeUpdate,
 } from 'typeorm';
+import { NumberTransformer } from '../../shared/helpers/number-transformer';
 
 @Entity()
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true })
+  @Column()
   login: string;
 
   @Column()
@@ -21,10 +22,10 @@ export class User extends BaseEntity {
   @Column({ default: 0 })
   version: number;
 
-  @Column('bigint')
+  @Column('bigint', { transformer: new NumberTransformer() })
   createdAt: number;
 
-  @Column('bigint')
+  @Column('bigint', { transformer: new NumberTransformer() })
   updatedAt: number;
 
   @BeforeInsert()

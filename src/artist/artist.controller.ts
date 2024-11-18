@@ -32,16 +32,16 @@ export class ArtistController {
   constructor(private readonly artistService: ArtistService) {}
 
   @Get()
-  findAll(): ResponseArtistDto[] {
+  findAll(): Promise<ResponseArtistDto[]> {
     return this.artistService.findAll();
   }
 
   @Get(':id')
-  findOne(
+  async findOne(
     @Param('id', UUIDValidationPipe)
     id: string,
-  ): ResponseArtistDto | undefined {
-    const artist = this.artistService.findOne(id);
+  ): Promise<ResponseArtistDto | undefined> {
+    const artist = await this.artistService.findOne(id);
 
     if (!artist) {
       throw new NotFoundException(`Artist with ID ${id} not found`);
@@ -54,7 +54,7 @@ export class ArtistController {
   @HttpCode(HttpStatus.CREATED)
   create(
     @Body(RequestParamValidationPipe) createArtistDto: CreateArtistDto,
-  ): ResponseArtistDto {
+  ): Promise<ResponseArtistDto> {
     return this.artistService.create(createArtistDto);
   }
 
@@ -63,13 +63,13 @@ export class ArtistController {
     @Param('id', UUIDValidationPipe) id: string,
     @Body(RequestParamValidationPipe)
     updateArtistDto: UpdateArtistDto,
-  ): ResponseArtistDto | undefined {
+  ): Promise<ResponseArtistDto | undefined> {
     return this.artistService.update(id, updateArtistDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id', UUIDValidationPipe) id: string): boolean {
+  remove(@Param('id', UUIDValidationPipe) id: string): Promise<boolean> {
     return this.artistService.remove(id);
   }
 }

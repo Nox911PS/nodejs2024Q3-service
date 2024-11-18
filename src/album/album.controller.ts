@@ -32,16 +32,17 @@ export class AlbumController {
   constructor(private readonly albumService: AlbumService) {}
 
   @Get()
-  findAll(): ResponseAlbumDto[] {
+  findAll(): Promise<ResponseAlbumDto[]> {
     return this.albumService.findAll();
   }
 
   @Get(':id')
-  findOne(
+  async findOne(
     @Param('id', UUIDValidationPipe)
     id: string,
-  ): ResponseAlbumDto | undefined {
-    const album = this.albumService.findOne(id);
+  ): Promise<ResponseAlbumDto | undefined> {
+    const album = await this.albumService.findOne(id);
+
     if (!album) {
       throw new NotFoundException(`Album with ID ${id} not found`);
     }
@@ -53,7 +54,7 @@ export class AlbumController {
   @HttpCode(HttpStatus.CREATED)
   create(
     @Body(RequestParamValidationPipe) createAlbumDto: CreateAlbumDto,
-  ): ResponseAlbumDto {
+  ): Promise<ResponseAlbumDto> {
     return this.albumService.create(createAlbumDto);
   }
 
@@ -62,13 +63,13 @@ export class AlbumController {
     @Param('id', UUIDValidationPipe) id: string,
     @Body(RequestParamValidationPipe)
     updateAlbumDto: UpdateAlbumDto,
-  ): ResponseAlbumDto | undefined {
+  ): Promise<ResponseAlbumDto | undefined> {
     return this.albumService.update(id, updateAlbumDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id', UUIDValidationPipe) id: string): boolean {
+  remove(@Param('id', UUIDValidationPipe) id: string): Promise<boolean> {
     return this.albumService.remove(id);
   }
 }

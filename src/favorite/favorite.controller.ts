@@ -23,7 +23,7 @@ export class FavoriteController {
   constructor(private readonly favoriteService: FavoriteService) {}
 
   @Get()
-  findAll(): ResponseFavoriteDto {
+  findAll(): Promise<ResponseFavoriteDto> {
     return this.favoriteService.findAll();
   }
 
@@ -31,7 +31,7 @@ export class FavoriteController {
   @HttpCode(HttpStatus.CREATED)
   createTrack(
     @Param('id', UUIDValidationPipe) id: string,
-  ): ResponseFavoriteDto {
+  ): Promise<ResponseFavoriteDto> {
     return this.favoriteService.create(id, 'tracks');
   }
 
@@ -39,7 +39,7 @@ export class FavoriteController {
   @HttpCode(HttpStatus.CREATED)
   createAlbum(
     @Param('id', UUIDValidationPipe) id: string,
-  ): ResponseFavoriteDto {
+  ): Promise<ResponseFavoriteDto> {
     return this.favoriteService.create(id, 'albums');
   }
 
@@ -47,25 +47,25 @@ export class FavoriteController {
   @HttpCode(HttpStatus.CREATED)
   createArtist(
     @Param('id', UUIDValidationPipe) id: string,
-  ): ResponseFavoriteDto {
+  ): Promise<ResponseFavoriteDto> {
     return this.favoriteService.create(id, 'artists');
   }
 
   @Delete('track/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  removeTrack(@Param('id', UUIDValidationPipe) id: string): void {
+  removeTrack(@Param('id', UUIDValidationPipe) id: string): Promise<void> {
     return this.favoriteService.remove(id, 'tracks');
   }
 
   @Delete('album/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  removeAlbum(@Param('id', UUIDValidationPipe) id: string): void {
+  removeAlbum(@Param('id', UUIDValidationPipe) id: string): Promise<void> {
     return this.favoriteService.remove(id, 'albums');
   }
 
   @Delete('artist/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  removeArtist(@Param('id', UUIDValidationPipe) id: string): void {
+  removeArtist(@Param('id', UUIDValidationPipe) id: string): Promise<void> {
     return this.favoriteService.remove(id, 'artists');
   }
 }

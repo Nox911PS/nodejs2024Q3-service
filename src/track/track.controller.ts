@@ -29,16 +29,16 @@ export class TrackController {
   constructor(private readonly trackService: TrackService) {}
 
   @Get()
-  findAll(): ResponseTrackDto[] {
+  findAll(): Promise<ResponseTrackDto[]> {
     return this.trackService.findAll();
   }
 
   @Get(':id')
-  findOne(
+  async findOne(
     @Param('id', UUIDValidationPipe)
     id: string,
-  ): ResponseTrackDto | undefined {
-    const track = this.trackService.findOne(id);
+  ): Promise<ResponseTrackDto | undefined> {
+    const track = await this.trackService.findOne(id);
 
     if (!track) {
       throw new NotFoundException(`Track with ID ${id} not found`);
@@ -51,7 +51,7 @@ export class TrackController {
   @HttpCode(HttpStatus.CREATED)
   create(
     @Body(RequestParamValidationPipe) createTrackDto: CreateTrackDto,
-  ): ResponseTrackDto {
+  ): Promise<ResponseTrackDto> {
     return this.trackService.create(createTrackDto);
   }
 
@@ -60,13 +60,13 @@ export class TrackController {
     @Param('id', UUIDValidationPipe) id: string,
     @Body(RequestParamValidationPipe)
     updateTrackDto: UpdateTrackDto,
-  ): ResponseTrackDto | undefined {
+  ): Promise<ResponseTrackDto | undefined> {
     return this.trackService.update(id, updateTrackDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id', UUIDValidationPipe) id: string): boolean {
+  remove(@Param('id', UUIDValidationPipe) id: string): Promise<boolean> {
     return this.trackService.remove(id);
   }
 }
