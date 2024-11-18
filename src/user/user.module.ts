@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
-import { InMemoryDatabaseService } from '../db/in-memory-database.service';
-import { SharedModule } from '../shared/shared.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from './interfaces/user.entity';
 
 @Module({
-  imports: [SharedModule],
+  imports: [TypeOrmModule.forFeature([User])],
   providers: [UserService],
   controllers: [UserController],
 })

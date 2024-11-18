@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TrackService } from './track.service';
 import { TrackController } from './track.controller';
-import { InMemoryDatabaseService } from '../db/in-memory-database.service';
-import { SharedModule } from '../shared/shared.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Track } from './interfaces/track.entity';
 
 @Module({
-  imports: [SharedModule],
+  imports: [TypeOrmModule.forFeature([Track])],
 
   providers: [TrackService],
   controllers: [TrackController],
