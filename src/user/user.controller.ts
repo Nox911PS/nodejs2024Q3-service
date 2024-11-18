@@ -31,38 +31,38 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  findAll(): ResponseUserDto[] {
+  async findAll(): Promise<ResponseUserDto[]> {
     return this.userService.findAll();
   }
 
   @Get(':id')
-  findOne(
+  async findOne(
     @Param('id', UUIDValidationPipe)
     id: string,
-  ): ResponseUserDto | undefined {
+  ): Promise<ResponseUserDto | undefined> {
     return this.userService.findOne(id);
   }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(
+  async create(
     @Body(RequestParamValidationPipe) createUserDto: CreateUserDto,
-  ): ResponseUserDto {
+  ): Promise<ResponseUserDto> {
     return this.userService.create(createUserDto);
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id', UUIDValidationPipe) id: string,
     @Body(RequestParamValidationPipe)
     updateUserPasswordDto: UpdateUserPasswordDto,
-  ): ResponseUserDto | undefined {
+  ): Promise<ResponseUserDto | undefined> {
     return this.userService.update(id, updateUserPasswordDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id', UUIDValidationPipe) id: string): boolean {
+  async remove(@Param('id', UUIDValidationPipe) id: string): Promise<boolean> {
     return this.userService.remove(id);
   }
 }

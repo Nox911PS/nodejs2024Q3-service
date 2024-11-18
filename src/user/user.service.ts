@@ -4,34 +4,47 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { InMemoryDatabaseService } from '../db/in-memory-database.service';
 import { User } from './interfaces/user.interface';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ResponseUserDto } from './dto/response-user.dto';
 import { v4 } from 'uuid';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { PostgresErrorCode } from '../helpers/postgres.helper';
 
 @Injectable()
 export class UserService {
-  constructor(private db: InMemoryDatabaseService<User>) {}
+  constructor(
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+  ) {}
 
-  create(createUserDto: CreateUserDto): ResponseUserDto {
-    const user: User = {
+  async create(createUserDto: CreateUserDto): Promise<ResponseUserDto> {
+    const user: User = this.userRepository.create({
       ...createUserDto,
       id: v4(),
       version: 1,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-    };
-    return this.db.create(user);
+    });
+
+    return this.userRepository.save(user).catch((error) => {
+      if (error.code === PostgresErrorCode.UNIQUE_VIOLATION) {
+        throw new HttpException(
+          'User login must be unique',
+          HttpStatus.CONFLICT,
+        );
+      } else {
+        throw error;
+      }
+    });
   }
 
-  findAll(): ResponseUserDto[] {
-    return this.db.findAll();
+  findAll(): Promise<ResponseUserDto[]> {
+    return this.userRepository.find();
   }
 
-  findOne(id: string): ResponseUserDto {
-    const user = this.db.findOne(id);
+  async findOne(id: string): Promise<ResponseUserDto> {
+    const user = await this.userRepository.findOne({ where: { id } });
 
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
@@ -40,11 +53,11 @@ export class UserService {
     return user;
   }
 
-  update(
+  async update(
     id: string,
     updateUserPasswordDto: UpdateUserPasswordDto,
-  ): ResponseUserDto {
-    const user = this.db.findOne(id);
+  ): Promise<ResponseUserDto> {
+    const user = await this.userRepository.findOne({ where: { id } });
 
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
@@ -61,22 +74,23 @@ export class UserService {
       );
     }
 
-    const updatedUser: User = this.db.update(id, {
+    const updatedUser: User = this.userRepository.create({
       ...user,
       password: updateUserPasswordDto.newPassword,
       version: user.version + 1,
       updatedAt: Date.now(),
     });
 
-    return updatedUser;
+    return this.userRepository.save(updatedUser);
   }
 
-  remove(id: string): boolean {
-    const isUserDeleted = this.db.remove(id);
-    if (!isUserDeleted) {
+  async remove(id: string): Promise<boolean> {
+    const result = await this.userRepository.delete(id);
+
+    if (result.affected === 0) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
 
-    return isUserDeleted;
+    return true;
   }
 }
