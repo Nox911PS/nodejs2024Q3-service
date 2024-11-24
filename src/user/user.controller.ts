@@ -23,6 +23,7 @@ import { NotFoundExceptionFilter } from '../filters/not-found-exception.filter';
 import { UUIDValidationPipe } from '../validators/uuid-validation.pipe';
 import { TransformInterceptor } from '../interceptors/transform.interceptor';
 import { RequestParamValidationPipe } from '../validators/request-param-validation.pipe';
+import { HttpExceptionFilter } from '../filters/http-exception.filter';
 
 @UseFilters(BadRequestExceptionFilter, NotFoundExceptionFilter)
 @UseInterceptors(new TransformInterceptor(ResponseUserDto))
@@ -51,6 +52,7 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
+  @UseFilters(HttpExceptionFilter)
   @Put(':id')
   update(
     @Param('id', UUIDValidationPipe) id: string,

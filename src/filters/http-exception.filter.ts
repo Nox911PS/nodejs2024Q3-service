@@ -20,8 +20,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse();
     const { method, url, query, body } = request;
     const status = exception.getStatus() || HttpStatus.FORBIDDEN;
+    const exceptionResponse = exception.getResponse();
+
     const message =
-      'The old password you provided is not matched with the user password';
+      exceptionResponse['error'] || exception?.message || 'HTTP_EXCEPTION';
 
     this.logger.warn(
       `[FORBIDDEN]: "METHOD":${method} "URL":${url} "QUERY":${JSON.stringify(
