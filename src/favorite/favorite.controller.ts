@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   UseFilters,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FavoriteService } from './favorite.service';
@@ -15,10 +16,12 @@ import { BadRequestExceptionFilter } from '../filters/bad-request-exception.filt
 import { NotFoundExceptionFilter } from '../filters/not-found-exception.filter';
 import { UUIDValidationPipe } from '../validators/uuid-validation.pipe';
 import { TransformInterceptor } from '../interceptors/transform.interceptor';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @UseFilters(BadRequestExceptionFilter, NotFoundExceptionFilter)
 @UseInterceptors(new TransformInterceptor(ResponseFavoriteDto))
 @Controller('favs')
+@UseGuards(JwtAuthGuard) // Apply the JWTAuthGuard here
 export class FavoriteController {
   constructor(private readonly favoriteService: FavoriteService) {}
 

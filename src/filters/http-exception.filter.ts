@@ -8,22 +8,25 @@ import {
   Logger,
 } from '@nestjs/common';
 
-@Catch(NotFoundException)
-export class NotFoundExceptionFilter implements ExceptionFilter {
-  private readonly logger = new Logger(NotFoundExceptionFilter.name, {
+@Catch(HttpException)
+export class HttpExceptionFilter implements ExceptionFilter {
+  private readonly logger = new Logger(HttpExceptionFilter.name, {
     timestamp: true,
   });
 
-  catch(exception: NotFoundException, host: ArgumentsHost) {
+  catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const request = ctx.getRequest();
     const response = ctx.getResponse();
     const { method, url, query, body } = request;
-    const status = exception.getStatus() || HttpStatus.NOT_FOUND;
-    const message = exception.message || 'Resource not found';
+    const status = exception.getStatus() || HttpStatus.FORBIDDEN;
+    const exceptionResponse = exception.getResponse();
+
+    const message =
+      exceptionResponse['error'] || exception?.message || 'HTTP_EXCEPTION';
 
     this.logger.warn(
-      `[NOT FOUND]: "METHOD":${method} "URL":${url} "QUERY":${JSON.stringify(
+      `[FORBIDDEN]: "METHOD":${method} "URL":${url} "QUERY":${JSON.stringify(
         query,
       )} "BODY":${JSON.stringify(body)}`,
     );

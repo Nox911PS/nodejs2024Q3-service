@@ -29,6 +29,18 @@ After starting the app on port (4000 as default) you can open
 in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
+## Logging
+
+You can define the logger level in .env file to log your app.
+Also, you can define file name and directory for the logs in .env file
+
+The level of the logs:  
+0: ['error'],  
+1: ['error', 'warn'],  
+2: ['error', 'warn', 'log'],  
+3: ['error', 'warn', 'log', 'debug'],  
+4: ['error', 'warn', 'log', 'debug', 'verbose'],
+
 ## Testing
 
 After application running open new terminal and enter:
@@ -116,3 +128,9 @@ Favorites
 + DELETE /favs/album/:id - delete album from favorites
 + POST /favs/artist/:id - add artist to the favorites
 + DELETE /favs/artist/:id - delete artist from favorites
+
+Login 
+
++ POST auth/signup - send login and password to create a new user
++ POST auth/login - send login and password to get Access token and Refresh token (optionally)
++ POST auth/refresh - send refresh token in body as { refreshToken } to get new pair of Access token and Refresh token

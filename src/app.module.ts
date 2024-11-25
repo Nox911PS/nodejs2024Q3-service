@@ -6,6 +6,7 @@ import { TrackModule } from './track/track.module';
 import { FavoriteModule } from './favorite/favorite.module';
 import { ConfigModule } from '@nestjs/config';
 import configuration from './config/configuration';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import configuration from './config/configuration';
     AlbumModule,
     TrackModule,
     FavoriteModule,
+    AuthModule,
   ],
 })
 export class AppModule {}

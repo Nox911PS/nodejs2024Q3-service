@@ -10,6 +10,7 @@ import {
   Post,
   Put,
   UseFilters,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { TrackService } from './track.service';
@@ -21,10 +22,12 @@ import { NotFoundExceptionFilter } from '../filters/not-found-exception.filter';
 import { UUIDValidationPipe } from '../validators/uuid-validation.pipe';
 import { TransformInterceptor } from '../interceptors/transform.interceptor';
 import { RequestParamValidationPipe } from '../validators/request-param-validation.pipe';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @UseFilters(BadRequestExceptionFilter, NotFoundExceptionFilter)
 @UseInterceptors(new TransformInterceptor(ResponseTrackDto))
 @Controller('track')
+@UseGuards(JwtAuthGuard) // Apply the JWTAuthGuard here
 export class TrackController {
   constructor(private readonly trackService: TrackService) {}
 

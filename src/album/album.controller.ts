@@ -12,6 +12,7 @@ import {
   Post,
   Put,
   UseFilters,
+  UseGuards,
   UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
@@ -24,10 +25,12 @@ import { NotFoundExceptionFilter } from '../filters/not-found-exception.filter';
 import { UUIDValidationPipe } from '../validators/uuid-validation.pipe';
 import { TransformInterceptor } from '../interceptors/transform.interceptor';
 import { RequestParamValidationPipe } from '../validators/request-param-validation.pipe';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @UseFilters(BadRequestExceptionFilter, NotFoundExceptionFilter)
 @UseInterceptors(new TransformInterceptor(ResponseAlbumDto))
 @Controller('album')
+@UseGuards(JwtAuthGuard) // Apply the JWTAuthGuard here
 export class AlbumController {
   constructor(private readonly albumService: AlbumService) {}
 
