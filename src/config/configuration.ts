@@ -4,4 +4,6 @@ export default () => ({
   logMaxSize: parseInt(process.env.LOG_MAX_SIZE_KB, 10) || 64,
   logDir: process.env.LOG_DIR || 'logs',
   logFile: process.env.LOG_FILE_NAME || 'app.log',
+  jwtSecret: process.env.JWT_SECRET_KEY || null,
+  jwtTokenExpire: process.env.TOKEN_EXPIRE_TIME || '1h',
 });

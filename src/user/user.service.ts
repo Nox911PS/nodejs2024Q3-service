@@ -10,15 +10,17 @@ import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ResponseUserDto } from './dto/response-user.dto';
 import { v4 } from 'uuid';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UserService {
   constructor(private db: InMemoryDatabaseService<User>) {}
 
-  create(createUserDto: CreateUserDto): ResponseUserDto {
+  async create(createUserDto: CreateUserDto): Promise<ResponseUserDto> {
     const user: User = {
       ...createUserDto,
       id: v4(),
+      password: await bcrypt.hash(createUserDto.password, 10), // Hashing password
       version: 1,
       createdAt: Date.now(),
       updatedAt: Date.now(),
@@ -40,17 +42,25 @@ export class UserService {
     return user;
   }
 
-  update(
+  async findByLogin(login: string): Promise<User | undefined> {
+    return this.db.findAll().find((user) => user.login === login);
+  }
+
+  async update(
     id: string,
     updateUserPasswordDto: UpdateUserPasswordDto,
-  ): ResponseUserDto {
+  ): Promise<ResponseUserDto> {
     const user = this.db.findOne(id);
 
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
 
-    if (user.password !== updateUserPasswordDto.oldPassword) {
+    const isPasswordMatching = await bcrypt.compare(
+      updateUserPasswordDto.oldPassword,
+      user.password,
+    );
+    if (!isPasswordMatching) {
       throw new HttpException(
         {
           status: HttpStatus.FORBIDDEN,
@@ -63,7 +73,7 @@ export class UserService {
 
     const updatedUser: User = this.db.update(id, {
       ...user,
-      password: updateUserPasswordDto.newPassword,
+      password: await bcrypt.hash(updateUserPasswordDto.newPassword, 10), // Hashing new password
       version: user.version + 1,
       updatedAt: Date.now(),
     });

@@ -6,13 +6,11 @@ import {
   HttpCode,
   HttpStatus,
   Param,
-  ParseUUIDPipe,
-  PipeTransform,
   Post,
   Put,
   UseFilters,
+  UseGuards,
   UseInterceptors,
-  UsePipes,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -24,10 +22,12 @@ import { UUIDValidationPipe } from '../validators/uuid-validation.pipe';
 import { TransformInterceptor } from '../interceptors/transform.interceptor';
 import { RequestParamValidationPipe } from '../validators/request-param-validation.pipe';
 import { HttpExceptionFilter } from '../filters/http-exception.filter';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @UseFilters(BadRequestExceptionFilter, NotFoundExceptionFilter)
 @UseInterceptors(new TransformInterceptor(ResponseUserDto))
 @Controller('user')
+@UseGuards(JwtAuthGuard) // Apply the JWTAuthGuard here
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -48,7 +48,7 @@ export class UserController {
   @HttpCode(HttpStatus.CREATED)
   create(
     @Body(RequestParamValidationPipe) createUserDto: CreateUserDto,
-  ): ResponseUserDto {
+  ): Promise<ResponseUserDto> {
     return this.userService.create(createUserDto);
   }
 
@@ -58,7 +58,7 @@ export class UserController {
     @Param('id', UUIDValidationPipe) id: string,
     @Body(RequestParamValidationPipe)
     updateUserPasswordDto: UpdateUserPasswordDto,
-  ): ResponseUserDto | undefined {
+  ): Promise<ResponseUserDto | undefined> {
     return this.userService.update(id, updateUserPasswordDto);
   }
 
